@@ -1,22 +1,35 @@
-let deckId
+let deckId = "";
+const cardsContainer = document.querySelector(".imgContainer");
+
+const newDeckBtn = document.querySelector(".newDeck");
+const drawBtn = document.querySelector("#draw-cards");
 
 function handleClick() {
-    fetch("https://apis.scrimba.com/deckofcards/api/deck/new/shuffle/")
-        .then(res => res.json())
-        .then(data => {
-            console.log(data)
-            deckId = data.deck_id
-        })
+  fetch("https://apis.scrimba.com/deckofcards/api/deck/new/shuffle/")
+      .then(res => res.json())
+      .then(data => {
+          console.log(data)
+          deckId = data.deck_id
+      })
 
-        document.querySelector("#draw-cards").disabled = false;
+      document.querySelector("#draw-cards").disabled = false;
 }
 
-document.querySelector(".newDeck").addEventListener("click", handleClick)
+newDeckBtn.addEventListener("click", handleClick)
 
-document.getElementById("draw-cards").addEventListener("click", () => {
-    fetch(`https://apis.scrimba.com/deckofcards/api/deck/${deckId}/draw/?count=2`)
-        .then(res => res.json())
-        .then(data => {
-          console.log(data);
-        })
+drawBtn.addEventListener("click", () => {
+  fetch(`https://apis.scrimba.com/deckofcards/api/deck/${deckId}/draw/?count=2`)
+      .then(res => res.json())
+      .then(data => {
+        console.log(data.cards[0].image);
+        
+        cardsContainer.children[0].innerHTML =
+        `
+          <img src=${data.cards[0].image} class="card"/>
+        `
+        cardsContainer.children[1].innerHTML = 
+        `
+          <img src=${data.cards[1].image} class="card"/>
+        `
+      })
 })
