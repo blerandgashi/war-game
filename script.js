@@ -5,11 +5,19 @@ const newDeckBtn = document.querySelector(".newDeck");
 const drawBtn = document.querySelector("#draw-cards");
 
 const winnerString = document.querySelector("h2");
+const cardRemaining = document.querySelector("#card-remaining")
+
+const human = document.querySelector("#human");
+const computer = document.querySelector("#computer");
+
+let humanScore = 0;
+let computerScore = 0;
 
 function handleClick() {
   fetch("https://apis.scrimba.com/deckofcards/api/deck/new/shuffle/")
       .then(res => res.json())
       .then(data => {
+          cardRemaining.textContent = `Remaining Cards: ${data.remaining}`
           console.log(data)
           deckId = data.deck_id
       })
@@ -23,7 +31,11 @@ drawBtn.addEventListener("click", () => {
   fetch(`https://apis.scrimba.com/deckofcards/api/deck/${deckId}/draw/?count=2`)
       .then(res => res.json())
       .then(data => {
-          //<img src=${data.cards[0].image} class="card"/>
+          console.log(data);
+          cardRemaining.innerHTML = 
+          `
+            Remaining Cards: ${data.remaining}
+          ` 
           cardsContainer.children[0].innerHTML = 
           `
             <img src=${data.cards[0].image} class="card"/>
@@ -37,6 +49,14 @@ drawBtn.addEventListener("click", () => {
           const winner = highestScore(data.cards[0].value, data.cards[1].value);
           winnerString.textContent = winner
           
+          if (data.remaining === 0) {
+            if (humanScore > computerScore) {
+              winnerString.textContent = `Human won with ${humanScore} points!`
+            }else{
+              winnerString.textContent = `Computer won with ${computerScore} points!`
+            }
+            drawBtn.disabled = true;
+          }
       })
 })
 
@@ -46,9 +66,13 @@ function highestScore(card1, card2){
   const card2Value = valueArr.indexOf(card2);
 
   if (card1Value > card2Value) {
-    return "Card 1 won"
+    computerScore++;
+    computer.textContent = `Computer points: ${computerScore}`
+    return "Computer win"
   }else if (card1Value < card2Value) {
-    return "Card 2 won"
+    humanScore++;
+    human.textContent = `Human points: ${humanScore}`
+    return "You win!"
   }else{
     return "War"
   }
