@@ -11,6 +11,11 @@ main{
   flex-direction: column;
   justify-content: space-between;
 }
+h2{
+  margin-bottom: 0;
+  text-align: center;
+  color: white;
+}
 .imgContainer{
   display: flex;
   flex-direction: column;
